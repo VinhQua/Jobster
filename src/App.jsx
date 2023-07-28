@@ -1,16 +1,17 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import Landing from "./pages/Landing";
+import { Dashboard, Error, Landing, Register } from "./pages";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <Landing />
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="landing" element={<Landing />} />
+        <Route path="register" element={<Register />} />
+        <Route path="*" element={<Error />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
