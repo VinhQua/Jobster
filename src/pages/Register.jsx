@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Wrapper from "../assets/wrappers/RegisterPage";
 import { FormRow, Logo } from "../components";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, registerUser } from "../features/users/userSlice";
+import { useNavigate } from "react-router-dom";
 const initialState = {
   name: "",
   email: "",
@@ -19,6 +20,7 @@ const Register = () => {
     const newValues = { ...values, [e.target.name]: e.target.value };
     setValues(newValues);
   };
+  console.log(user);
   const onSubmit = (e) => {
     e.preventDefault();
     // console.log(e.target);
@@ -36,6 +38,13 @@ const Register = () => {
     const newValues = { ...values, isMember: !values.isMember };
     setValues(newValues);
   };
+  // Programmatically navigate to dashboard
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
   return (
     <Wrapper className="full-page">
       <form className="form" onSubmit={onSubmit}>
@@ -67,7 +76,7 @@ const Register = () => {
           />
         </div>
         <button type="submit" className="btn btn-block" disabled={isLoading}>
-          submit
+          {isLoading ? "Loading..." : "Submit"}
         </button>
         <p>
           {values.isMember ? "Not a member yet?" : "Already a member?"}
