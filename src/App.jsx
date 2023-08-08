@@ -8,7 +8,7 @@ import {
   Profile,
   SharedLayout,
   Stats,
-} from "./pages/Dashboard";
+} from "./pages/dashboard";
 
 function App() {
   return (
