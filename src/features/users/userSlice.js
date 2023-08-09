@@ -6,6 +6,11 @@ import {
   getUserFromLocalStorage,
   removeUserFromLocalStorage,
 } from "../../utils/localStorage";
+import {
+  loginUserThunk,
+  registerUserThunk,
+  updateUserThunk,
+} from "./userThunk";
 
 const initialState = {
   isSideBarOpen: false,
@@ -14,25 +19,15 @@ const initialState = {
 };
 export const registerUser = createAsyncThunk(
   "user/registerUser",
-  async (user, thunkAPI) => {
-    try {
-      const res = await customFetch.post("/auth/register", user);
-      return res.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.msg);
-    }
-  }
+  async (user, thunkAPI) => registerUserThunk("auth/register", user, thunkAPI)
 );
 export const loginUser = createAsyncThunk(
   "user/loginUser",
-  async (user, thunkAPI) => {
-    try {
-      const { data } = await customFetch.post("/auth/login", user);
-      return data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.msg);
-    }
-  }
+  async (user, thunkAPI) => loginUserThunk("auth/login", user, thunkAPI)
+);
+export const updateUser = createAsyncThunk(
+  "user/userUpdate",
+  async (user, thunkAPI) => updateUserThunk("auth/updateUser", user, thunkAPI)
 );
 const userSlice = createSlice({
   name: "user",
@@ -74,6 +69,20 @@ const userSlice = createSlice({
         toast.success(`Welcome back ${user.name}`);
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        toast.error(payload);
+      })
+      .addCase(updateUser.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUser.fulfilled, (state, { payload }) => {
+        console.log(payload.user);
+        state.isLoading = false;
+        state.user = payload.user;
+        toast.success("User Updated");
+        addUserToLocalStorage(payload.user);
+      })
+      .addCase(updateUser.rejected, (state, { payload }) => {
         state.isLoading = false;
         toast.error(payload);
       });
