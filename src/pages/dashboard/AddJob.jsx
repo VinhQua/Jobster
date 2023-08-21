@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Wrapper from "../../assets/wrappers/DashboardFormPage";
 import { useDispatch, useSelector } from "react-redux";
 import { FormRow, FormSelect } from "../../components";
@@ -8,6 +8,13 @@ import {
   handleJobInput,
 } from "../../features/jobs/jobSlice";
 const AddJob = () => {
+  const { user } = useSelector((store) => store.user);
+  // add default location
+  useEffect(() => {
+    if (!isEditing) {
+      dispatch(handleJobInput({ name: "jobLocation", value: user.location }));
+    }
+  }, []);
   const dispatch = useDispatch();
   const {
     isLoading,
