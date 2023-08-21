@@ -1,8 +1,14 @@
 import React from "react";
 import Wrapper from "../../assets/wrappers/DashboardFormPage";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FormRow, FormSelect } from "../../components";
+import {
+  clearValue,
+  createJob,
+  handleJobInput,
+} from "../../features/jobs/jobSlice";
 const AddJob = () => {
+  const dispatch = useDispatch();
   const {
     isLoading,
     position,
@@ -19,8 +25,13 @@ const AddJob = () => {
     if (!position || !company || !jobLocation) {
       console.log("All Fields Required");
     }
+    dispatch(createJob({ position, company, jobLocation, jobType, status }));
   };
-  const handleChange = (e) => {};
+  const handleChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    dispatch(handleJobInput({ name, value }));
+  };
 
   return (
     <Wrapper>
@@ -69,7 +80,7 @@ const AddJob = () => {
             <button
               type="button"
               className="btn btn-block clear-btn"
-              onClick={() => console.log("clear values")}
+              onClick={() => dispatch(clearValue())}
             >
               clear
             </button>
