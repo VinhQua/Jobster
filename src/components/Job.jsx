@@ -5,7 +5,7 @@ import JobInfo from "./JobInfo";
 import { FaBriefcase, FaCalendarAlt, FaLocationArrow } from "react-icons/fa";
 import moment from "moment/moment";
 import { useDispatch } from "react-redux";
-import { deleteJob } from "../features/jobs/jobSlice";
+import { deleteJob, setEditJob } from "../features/jobs/jobSlice";
 const Job = ({
   _id,
   position,
@@ -38,7 +38,18 @@ const Job = ({
             <Link
               to="/add-job"
               className="btn edit-btn"
-              onClick={() => console.log("edit job")}
+              onClick={() =>
+                dispatch(
+                  setEditJob({
+                    editJobId: _id,
+                    position,
+                    company,
+                    jobType,
+                    jobLocation,
+                    status,
+                  })
+                )
+              }
             >
               Edit
             </Link>

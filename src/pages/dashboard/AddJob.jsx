@@ -5,6 +5,7 @@ import { FormRow, FormSelect } from "../../components";
 import {
   clearValue,
   createJob,
+  editJob,
   handleJobInput,
 } from "../../features/jobs/jobSlice";
 const AddJob = () => {
@@ -17,6 +18,7 @@ const AddJob = () => {
   }, []);
   const dispatch = useDispatch();
   const {
+    editJobId,
     isLoading,
     position,
     company,
@@ -32,7 +34,13 @@ const AddJob = () => {
     if (!position || !company || !jobLocation) {
       console.log("All Fields Required");
     }
-    dispatch(createJob({ position, company, jobLocation, jobType, status }));
+    if (!isEditing) {
+      return dispatch(
+        createJob({ position, company, jobLocation, jobType, status })
+      );
+    }
+    let job = { position, company, jobLocation, jobType, status };
+    return dispatch(editJob({ jobId: editJobId, job }));
   };
   const handleChange = (e) => {
     const name = e.target.name;
@@ -97,7 +105,7 @@ const AddJob = () => {
               disabled={isLoading}
               onClick={handleSubmit}
             >
-              submit
+              {isEditing ? "save" : "submit"}
             </button>
           </div>
         </div>
