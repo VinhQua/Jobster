@@ -32,7 +32,7 @@ export const getAllJobs = createAsyncThunk(
           Authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
         },
       });
-      console.log(data);
+
       return data;
     } catch (error) {
       if (error.response.status === 401) {
@@ -47,6 +47,14 @@ export const getAllJobs = createAsyncThunk(
 const allJobsSlice = createSlice({
   name: "allJobs",
   initialState,
+  reducers: {
+    showLoading: (state) => {
+      state.isLoading = true;
+    },
+    hideLoading: (state) => {
+      state.isLoading = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAllJobs.pending, (state, { payload }) => {
@@ -64,4 +72,5 @@ const allJobsSlice = createSlice({
       });
   },
 });
+export const { showLoading, hideLoading } = allJobsSlice.actions;
 export default allJobsSlice.reducer;

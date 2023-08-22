@@ -3,6 +3,7 @@ import customFetch from "../../utils/axios";
 import { logoutUser } from "../users/userSlice";
 import { toast } from "react-toastify";
 import { getUserFromLocalStorage } from "../../utils/localStorage";
+import { getAllJobs, hideLoading, showLoading } from "../allJobs/allJobsSlice";
 
 const initialState = {
   isLoading: false,
@@ -38,7 +39,24 @@ export const createJob = createAsyncThunk(
     }
   }
 );
-
+export const deleteJob = createAsyncThunk(
+  "jobs/deleteJob",
+  async (jobId, thunkAPI) => {
+    try {
+      thunkAPI.dispatch(showLoading());
+      const { data } = await customFetch.delete(`jobs/${jobId}`, {
+        headers: {
+          Authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+        },
+      });
+      thunkAPI.dispatch(getAllJobs());
+      return data.msg;
+    } catch (error) {
+      thunkAPI.dispatch(hideLoading());
+      return thunkAPI.rejectWithValue(error.response.data.msg);
+    }
+  }
+);
 const jobSlice = createSlice({
   name: "job",
   initialState,
@@ -65,6 +83,13 @@ const jobSlice = createSlice({
       })
       .addCase(createJob.rejected, (state, { payload }) => {
         state.isLoading = false;
+        toast.error(payload);
+      })
+      .addCase(deleteJob.pending, (state) => {})
+      .addCase(deleteJob.fulfilled, (state, { payload }) => {
+        toast.success(payload);
+      })
+      .addCase(deleteJob.rejected, (state, { payload }) => {
         toast.error(payload);
       });
   },
