@@ -8,11 +8,12 @@ import {
   handleFiltersInput,
 } from "../features/allJobs/allJobsSlice";
 const SearchContainer = () => {
-  const { search, searchType, searchStatus, sort, sortOptions } = useSelector(
-    (store) => store.allJobs
-  );
+  const { isLoading, search, searchType, searchStatus, sort, sortOptions } =
+    useSelector((store) => store.allJobs);
+  const { jobTypeOptions } = useSelector((store) => store.job);
   const dispatch = useDispatch();
   const handleChange = (e) => {
+    if (isLoading) return;
     const name = e.target.name;
     const value = e.target.value;
     dispatch(handleFiltersInput({ name, value }));
@@ -32,14 +33,14 @@ const SearchContainer = () => {
           <FormSelect
             name="searchStatus"
             labelText="status"
-            list={["pending", "declined", "interview"]}
+            list={["all", "pending", "declined", "interview"]}
             value={searchStatus}
             handleChange={handleChange}
           />
           <FormSelect
             name="searchType"
             labelText="type"
-            list={["all", "declined", "interview"]}
+            list={["all", ...jobTypeOptions]}
             value={searchType}
             handleChange={handleChange}
           />
