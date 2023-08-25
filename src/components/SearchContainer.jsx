@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Wrapper from "../assets/wrappers/SearchContainer";
 import FormRow from "./FormRow";
@@ -8,6 +8,7 @@ import {
   handleFiltersInput,
 } from "../features/allJobs/allJobsSlice";
 const SearchContainer = () => {
+  const [localSearch, setLocalSearch] = useState("");
   const { isLoading, search, searchType, searchStatus, sort, sortOptions } =
     useSelector((store) => store.allJobs);
   const { jobTypeOptions } = useSelector((store) => store.job);
@@ -18,7 +19,16 @@ const SearchContainer = () => {
     const value = e.target.value;
     dispatch(handleFiltersInput({ name, value }));
   };
-
+  //Debounce Search
+  useEffect(() => {
+    let timeId;
+    timeId = setTimeout(() => {
+      dispatch(handleFiltersInput({ name: "search", value: localSearch }));
+    }, 1000);
+    return () => {
+      clearTimeout(timeId);
+    };
+  }, [localSearch]);
   return (
     <Wrapper>
       <div className="form">
@@ -27,8 +37,8 @@ const SearchContainer = () => {
           <FormRow
             name="search"
             type="text"
-            value={search}
-            handleChange={handleChange}
+            value={localSearch}
+            handleChange={(e) => setLocalSearch(e.target.value)}
           />
           <FormSelect
             name="searchStatus"
